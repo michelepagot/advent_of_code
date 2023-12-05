@@ -82,25 +82,29 @@ def your_hand_part2(result, opponent):
     print(f"your_hand_part2(result={result}, opponent={opponent})")
     return ret
 
-with open(sys.argv[1], 'r', encoding='utf-8') as f:
-    score = [0, 0]
-    you = ['', '']
-    for line in f.readlines():
-        match = re.search(r'([ABC]) ([YXZ])', line)
-        if match:
-            # A for Rock, B for Paper, and C for Scissors
-            opponent = translate(match.group(1), ['A', 'B', 'C'])
-            # X for Rock, Y for Paper, and Z for Scissors
-            you[0] = translate(match.group(2), ['X', 'Y', 'Z'])
-            you[1] = your_hand_part2(match.group(2), opponent)
+def main():
+    with open(sys.argv[1], 'r', encoding='utf-8') as f:
+        score = [0, 0]
+        you = ['', '']
+        for line in f.readlines():
+            match = re.search(r'([ABC]) ([YXZ])', line)
+            if match:
+                # A for Rock, B for Paper, and C for Scissors
+                opponent = translate(match.group(1), ['A', 'B', 'C'])
+                # X for Rock, Y for Paper, and Z for Scissors
+                you[0] = translate(match.group(2), ['X', 'Y', 'Z'])
+                you[1] = your_hand_part2(match.group(2), opponent)
 
-            for part in [0, 1]:
-                score[part] += score_your_hand(you[part])
-                score[part] += score_the_challenge(you[part], opponent)
+                for part in [0, 1]:
+                    score[part] += score_your_hand(you[part])
+                    score[part] += score_the_challenge(you[part], opponent)
 
             # X means you need to lose
             # Y means you need to end the round in a draw
             # Z means you need to win
 
-print("Part1:" + str(score[0]))
-print("Part2:" + str(score[1]))
+    print("Part1:" + str(score[0]))
+    print("Part2:" + str(score[1]))
+
+if __name__ == "__main__":
+    main()

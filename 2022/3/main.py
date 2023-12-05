@@ -23,13 +23,18 @@ class Rackpack():
         ret += " Common:" + self.common
         ret += " Rating:" + str(self.rating)
         return ret
-        
-with open(sys.argv[1], 'r', encoding='utf-8') as f:
-    score = [0, 0]
-    for line in f.readlines():
-        this_rackpack = Rackpack(line)
-        print(this_rackpack)
-        score[0] += this_rackpack.rating
 
-print("Part1:" + str(score[0]))
-print("Part2:" + str(score[1]))
+
+def main():
+    with open(sys.argv[1], 'r', encoding='utf-8') as f:
+        score = [0, 0]
+        for line in f.readlines():
+            this_rackpack = Rackpack(line)
+            print(this_rackpack)
+            score[0] += this_rackpack.rating
+
+    print("Part1:" + str(score[0]))
+    print("Part2:" + str(score[1]))
+
+if __name__ == "__main__":
+    main()
