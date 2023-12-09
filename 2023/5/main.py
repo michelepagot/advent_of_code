@@ -335,7 +335,6 @@ def get_list_seeds(seeds):
     log.debug("number of seeds for the part2 --> %s", tot)
     return tot
 
-
 def main():
     with open(sys.argv[1], 'r', encoding='utf-8') as f:
         score = [None, 0]
