@@ -7,7 +7,7 @@ import re
 import time
 
 log = logging.getLogger()
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 handler = logging.StreamHandler()
 handler.setFormatter(
     logging.Formatter(fmt="%(asctime)s %(levelname)-8s %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
