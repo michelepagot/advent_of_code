@@ -45,8 +45,6 @@ def test_almanac_is_seed():
     assert a.is_seed(56) == False
     assert a.is_seed(56,2) == True
 
-    
-
 
 def test_almanac_decoding_class_only_care_first_seeds_line():
     """
@@ -344,3 +342,27 @@ def test_get_list_seeds_two_pair():
     New seed list definition for the part 2
     """
     assert [1, 2, 3, 9, 10, 11, 12, 13] == main.get_list_seeds([1, 3, 9, 5])
+
+def test_map_format_i2b():
+    """
+    [<DESTINATION>, <SOURCE>, <LENGTH>] --> [<SOURCE_START>, <SOURCE_END>, <DELTA>]
+    """
+    assert main.map_format_i2b([10, 0, 1]) == [0, 0, 10]
+    assert main.map_format_i2b([0, 10, 1]) == [10, 10, -10]
+    assert main.map_format_i2b([10, 0, 5]) == [0, 4, 10]
+
+def test_vertical_slices():
+    """
+    Input is a list of many [<SOURCE_START>, <SOURCE_END>]
+
+    e.g. [[3,6], [9,9], [1,5], [8,10], [5,6]]
+
+    line1 | . . . 3 - - 6 . . . .
+    line2 | . . . . . . . . . 9 .
+    line3 | . 1 - - - 5 . . . . .
+    line4 | . . . . . . . . 8 - 10
+    line5 | . . . . . 5 6 . . . .
+
+    Output is [1,3,5,6,8,9,10]
+    """
+    assert main.vertical_slices([[3,6], [9,9], [1,5], [8,10], [5,6]]) == [1,3,5,6,8,9,10]

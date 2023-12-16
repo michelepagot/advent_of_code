@@ -22,9 +22,11 @@ class Almanac():
     """
 
     def __init__(self, lines) -> None:
-        self.translators = {}
         self.seeds = None
-
+        # Two different representations of the same data
+        self.translators = {}
+        self.translators_boundary = {}
+        
         # regexp to read the first line of the file: the list of seeds
         re_seeds = re.compile(r'seeds: ([\d\s]+)')
 
@@ -55,6 +57,7 @@ class Almanac():
                 log.debug("Almanac::map_title:%s", map_title)
                 if map_title not in self.translators:
                     self.translators[map_title] = []
+                    self.translators_boundary[map_title] = []
                 continue
             match_maps = re_maps.search(line)
             if match_maps:
@@ -65,6 +68,7 @@ class Almanac():
                 log.debug("Almanac::destination_range:%s source_range:%s range_length:%s",
                       destination_range, source_range, range_length)
                 self.translators[map_title].append([destination_range, source_range, range_length])
+                self.translators_boundary[map_title].append(map_format_i2b([destination_range, source_range, range_length]))
 
     def get_translator_name(self, name, direction=True):
         """
@@ -102,11 +106,14 @@ class Almanac():
         """
         if part == 1:
             return seed in self.seeds
-        else:
+        elif part == 2:
             for r in self.seed_ranges:
-                if seed >= r[0] and seed >= r[1]:
+                log.debug("Check if seed %s is included in range %s", seed, r)
+                if seed >= r[0] and seed <= (r[0] + r[1] -1):
                     return True
             return False
+        log.error("Part:%s is not valid. Only 1 and 2 supported", part)
+        return False
 
 
     def reverse(self, start_element_name, start_element):
@@ -116,7 +123,7 @@ class Almanac():
         So this function should search for translator 'somethingelse-to-something',
         and using its ranges, finds the 'somethinngelse' M that is associated to the 'something' N
         The reverse search stop at seed.
-        The function does  return a seed id, but does not verify if it is an existing one 
+        The function returns a seed id, but does not verify if it is an existing one 
         """
         next_element_name = start_element_name
         next_element_value = start_element
@@ -144,6 +151,36 @@ class Almanac():
                       next_element_name, next_element_value)
             if next_element_name == 'seed':
                 return next_element_value
+
+
+def vertical_slices(input):
+    """
+    Input is a list of many [<SOURCE_START>, <SOURCE_END>]
+
+    e.g. [[3,6], [9,9], [1,5], [8,10], [5,6]]
+
+    line1 | . . . 3 - - 6 . . . .
+    line2 | . . . . . . . . . 9 .
+    line3 | . 1 - - - 5 . . . . .
+    line4 | . . . . . . . . 8 - 10
+    line5 | . . . . . 5 6 . . . .
+
+    Output is [1,3,5,6,8,9,10] all the different boundary
+    """
+    ret = []
+    for i in input:
+        ret.append(i[0])
+        ret.append(i[1])
+    return list(set(ret))
+
+
+def map_format_i2b(i_range):
+    """
+    Translate from two different ranges rappresentations, from the one used in input to another one
+
+    [<DESTINATION>, <SOURCE>, <LENGTH>] --> [<SOURCE_START>, <SOURCE_END>, <DELTA>]
+    """
+    return [i_range[1], i_range[1]+i_range[2]-1, i_range[0]-i_range[1]]
 
 
 def match_range(number, range_space, direction=True):
