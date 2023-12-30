@@ -3,10 +3,18 @@ Advent of Code 2023 day 1
 """
 import sys
 import re
+import logging
+
+log = logging.getLogger()
+log.setLevel(logging.ERROR)
+handler = logging.StreamHandler()
+formatter = logging.Formatter(fmt="%(asctime)s %(levelname)-8s %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+handler.setFormatter(formatter)
+log.addHandler(handler)
 
 def get_digit_list_part1(line):
     ret = [c for c in line if c.isdigit()]
-    # print(f"Part1 Line:{line.strip()}  -->  ret:{ret}")
+    log.debug("Part1 Line:%s  -->  ret:%s", line.strip(), ret)
     return ret
 
 
@@ -18,12 +26,6 @@ def translate_word_to_digit(word):
     """
     return str(TRANSLATOR.index(word)+1)
 
-
-def translate_digit_to_word(digit):
-    """
-    get `4` and return `four`
-    """
-    return TRANSLATOR[int(digit)-1]
 
 def get_digit_list_part2(line):
     ret = []
@@ -37,7 +39,7 @@ def get_digit_list_part2(line):
                 ret.append(this_number)
             else:
                 ret.append(translate_word_to_digit(this_number))
-    # print(f"Part2 Line:{line.strip()}  -->  ret:{ret}")
+    log.debug("Part2 Line:%s  -->  ret:%s", line.strip(), ret)
     return ret
 
 

@@ -351,6 +351,7 @@ def test_map_format_i2b():
     assert main.map_format_i2b([0, 10, 1]) == [10, 10, -10]
     assert main.map_format_i2b([10, 0, 5]) == [0, 4, 10]
 
+
 def test_vertical_slices():
     """
     Input is a list of many [<SOURCE_START>, <SOURCE_END>]
@@ -366,3 +367,97 @@ def test_vertical_slices():
     Output is [1,3,5,6,8,9,10]
     """
     assert main.vertical_slices([[3,6], [9,9], [1,5], [8,10], [5,6]]) == [1,3,5,6,8,9,10]
+
+def test_vertical_slices_sum_gain_detached_two():
+    """
+    Input [[3,6,10], [9,9,-7]]
+
+    line1 | . . . 3 - - 6 . . . .
+    line2 | . . . . . . . . . 9 .
+    
+    Output is [[3,6,10], [9,9,-7]]
+    """
+    assert main.vertical_slices_sum_gain([[3,6,10], [9,9,-7]]) == [[3,6,10], [9,9,-7]]
+
+def test_vertical_slices_sum_gain_detached_three_order():
+    """
+    Input [[1,2,10], [3,5,-7], [7,9,2]]
+
+    line1 | . 1 2 . . . . . . . .
+    line2 | . . . . 3 - 5 . . . .
+    line3 | . . . . . . . . 7 - 9
+    
+    Output is [[1,2,10], [3,5,-7], [7,9,2]]
+    """
+    assert main.vertical_slices_sum_gain([[1,2,10], [3,5,-7], [7,9,2]]) == [[1,2,10], [3,5,-7], [7,9,2]]
+
+def test_vertical_slices_sum_gain_detached_three_inverted_order():
+    """
+    Input [[7,9,2], [3,5,-7], [1,2,10]]
+
+    line1 | . . . . . . . . 7 - 9
+    line2 | . . . . 3 - 5 . . . .
+    line3 | . 1 2 . . . . . . . .
+    
+    Output is [[1,2,10], [3,5,-7], [7,9,2]]
+    """
+    assert main.vertical_slices_sum_gain([[7,9,2], [3,5,-7], [1,2,10]]) == [[1,2,10], [3,5,-7], [7,9,2]]
+
+def test_vertical_slices_sum_gain_detached_three_interleaved_order():
+    """
+    Input [[1,2,10], [7,9,2], [3,5,-7]]
+
+    line1 | . 1 2 . . . . . . . .
+    line2 | . . . . . . . . 7 - 9
+    line3 | . . . . 3 - 5 . . . .
+    
+    Output is [[1,2,10], [3,5,-7], [7,9,2]]
+    """
+    assert main.vertical_slices_sum_gain([[1,2,10], [7,9,2], [3,5,-7]]) == [[1,2,10], [3,5,-7], [7,9,2]]
+
+def test_vertical_slices_sum_gain_consecutive():
+    """
+    Input [[3,6,10], [7,9,-7]]
+
+    line1 | . . . 3 - - 6 . . . .
+    line2 | . . . . . . . 7 - 9 .
+    
+    Output is [[3,6,10], [7,9,-7]]
+    """
+    assert main.vertical_slices_sum_gain([[3,6,10], [7,9,-7]]) == [[3,6,10], [7,9,-7]]
+
+
+def test_vertical_slices_sum_gain_overlapping():
+    """
+    Input [[3,6,10], [6,9,-7]]
+
+    line1 | . . . 3 - - 6 . . . .
+    line2 | . . . . . . 6 - - 9 .
+    
+    Output is [[3,5,10], [6, 6, 3], [7,9,-7]]
+    """
+    assert main.vertical_slices_sum_gain([[3,6,10], [6,9,-7]]) == [[3,5,10], [6, 6, 3], [7,9,-7]]
+
+
+def test_vertical_slices_sum_gain_contained():
+    """
+    Input [[3,6,10], [2,9,-7]]
+
+    line1 | . . . 3 - - 6 . . . .
+    line2 | . . 2 - - - - - - 9 .
+    
+    Output is [[0,1,1], [2,2,-7], [3 ,6, 3], [7, 9, -7], [10,10,1]]
+    """
+    pass
+
+
+def test_range_in_ranges_empty():
+   assert main.range_in_ranges(new_range=[], ranges=[]) == []
+   assert main.range_in_ranges(new_range=[], ranges=[[1,2,42]]) == [[1,2,42]]
+   assert main.range_in_ranges(new_range=[1,2,42], ranges=[]) == [[1,2,42]]
+
+def test_range_in_ranges_before():
+    assert main.range_in_ranges(new_range=[1,2,42], ranges=[[4,5,7]]) == [[1,2,42], [4,5,7]]
+
+def test_range_in_ranges_after():
+    assert main.range_in_ranges(new_range=[4,5,7], ranges=[[4,5,7]]) == [[1,2,42], [4,5,7]]

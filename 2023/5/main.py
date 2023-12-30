@@ -155,7 +155,7 @@ class Almanac():
 
 def vertical_slices(input):
     """
-    Input is a list of many [<SOURCE_START>, <SOURCE_END>]
+    Input is a list of many [<SOURCE_START>, <SOURCE_END>, ...]
 
     e.g. [[3,6], [9,9], [1,5], [8,10], [5,6]]
 
@@ -167,12 +167,49 @@ def vertical_slices(input):
 
     Output is [1,3,5,6,8,9,10] all the different boundary
     """
-    ret = []
+    ret = set()
+    log.error("vertical_slices:: input=%s", input)
     for i in input:
-        ret.append(i[0])
-        ret.append(i[1])
-    return list(set(ret))
+        ret.add(i[0])
+        ret.add(i[1])
+    return sorted(set(ret))
 
+
+def vertical_slices_sum_gain(input):
+    """
+    Input is a list of multiple ranges [<SOURCE_START>, <SOURCE_END>, <DELTA>]
+    """
+    res = []
+    log.error("vertical_slices_sum_gain:: input=%s", input)
+    for this_new_range in  input:
+        log.error("vertical_slices_sum_gain:: process this_new_range=%s and add it to res=%s", this_new_range, res)
+        if len(res) == 0:
+            res.append(this_new_range)
+            continue
+
+        if this_new_range[1] < res[0][0]:
+            res.insert(0, this_new_range)
+            continue
+
+        if this_new_range[0] > res[-1][1]:
+            res.append(this_new_range)
+            continue
+    return res
+
+
+def range_in_ranges(new_range=[], ranges=[]):
+    """
+    Input a set of 
+    """
+    if len(new_range) == 0:
+        log.info("range_in_ranges::Nothing to insert in new_range:%s, return the existing ranges %s", new_range, ranges)
+        return ranges
+    if len(ranges) == 0:
+        log.info("range_in_ranges::Nothing in ranges %s. Initialize it with the new_range:%s", ranges, new_range)
+        return  [new_range]
+    if new_range[1] < ranges[0][0]:
+        return ranges.insert(0, new_range)
+    return None
 
 def map_format_i2b(i_range):
     """
