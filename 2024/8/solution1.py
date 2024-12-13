@@ -48,3 +48,18 @@ for p in parsed:
             print(f"    Adding antinode {a}")
             res.add(a)
 print(f"Solution1 {len(res)}")
+
+def antinodes(A, B, M):
+    res = []
+    m = 0
+    V = tuple(A)
+    while V[0] >= 0 and V[1] >= 0:
+        print(f"iteration m:{-m} V:{V} A:{A} B:{B} c_diff(B,A):{c_diff(B,A)}")
+        V = c_sum(V, c_per(c_diff(B,A), m))
+        m =+ 1
+    V = tuple(A)
+    m = 0
+    while V[0] < M[0] and V[1] < M[1]:
+        print(f"iteration m:{m} V:{V} A:{A} B:{B} c_diff(B,A):{c_diff(B,A)}")
+        V = c_sum(V, c_per(c_diff(B,A), m))
+        m =+ 1
