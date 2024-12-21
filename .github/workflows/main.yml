@@ -31,8 +31,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - id: check_folder
-        name: Check solution presence
+      - id: check_folder_lnx
+        name: Check solution presence on linux
+        if: runner.os == 'Linux'
         run: |
           if [ -d "${{ matrix.year }}/${{ matrix.day }}" ]; then
             echo "sol_exist=YES" >> $GITHUB_OUTPUT
@@ -40,24 +41,42 @@ jobs:
             echo "sol_exist=NO" >> $GITHUB_OUTPUT
           fi
 
-      - id: step2
+      - id: check_folder_win
+        name: Check solution presence on windows
+        if: runner.os == 'Windows'
+        run: |
+          if (Test-Path "${{ matrix.year }}\${{ matrix.day }}") {
+              echo "sol_exist=YES" >> $env:GITHUB_OUTPUT
+          } else {
+              echo "sol_exist=NO" >> $env:GITHUB_OUTPUT
+          }
+
+      - id: install_aoc_win
         name: Install aoc-cli binary
-        if: steps.check_folder.outputs.sol_exist == 'YES'
+        if: steps.check_folder_win.outputs.sol_exist == 'YES'
+        run: |
+          cd $env:TEMP
+          Invoke-WebRequest -Uri https://github.com/scarvalhojr/aoc-cli/releases/download/0.12.0/aoc-cli-0.12.0-x86_64-pc-windows-msvc.zip -OutFile aoc-cli.zip
+          Expand-Archive -Path aoc-cli.zip -DestinationPath aoc-cli
+          Move-Item -Path aoc-cli\aoc.exe -Destination $env:ProgramFiles\aoc-cli.exe
+          $env:ProgramFiles\aoc-cli.exe --version
+
+      - id: install_aoc_lnx
+        name: Install aoc-cli binary
+        if: steps.check_folder_lnx.outputs.sol_exist == 'YES'
         run: |
           cd /tmp
           curl -sSL https://github.com/scarvalhojr/aoc-cli/releases/download/0.12.0/aoc-cli-0.12.0-x86_64-unknown-linux-musl.tar.gz -o aoc-cli.tar.gz
           tar -xzf aoc-cli.tar.gz
           mv aoc-cli-0.12.0-x86_64-unknown-linux-musl/aoc /usr/local/bin/aoc-cli
-          which aoc-cli
           aoc-cli --version
 
       - id: step3
         name: Get input
-        if: steps.step2.conclusion == 'success'
+        if: steps.install_aoc_lnx.conclusion == 'success' || steps.install_aoc_win.conclusion == 'success'
         run: |
           cd ${{ matrix.year }}/${{ matrix.day }} 
           aoc-cli -y ${{ matrix.year }} -d ${{ matrix.day }} -I download
-          ls -lai
         env:
           ADVENT_OF_CODE_SESSION: ${{ secrets.ADVENT_OF_CODE_SESSION }}
 
@@ -66,7 +85,6 @@ jobs:
         if: steps.step3.conclusion == 'success'
         run: |
           cd ${{ matrix.year }}/${{ matrix.day }} 
-          wc -l input
           make test
 
           
