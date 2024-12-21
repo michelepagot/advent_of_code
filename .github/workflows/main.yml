@@ -59,7 +59,7 @@ jobs:
           Invoke-WebRequest -Uri https://github.com/scarvalhojr/aoc-cli/releases/download/0.12.0/aoc-cli-0.12.0-x86_64-pc-windows-msvc.zip -OutFile aoc-cli.zip
           Expand-Archive -Path aoc-cli.zip -DestinationPath aoc-cli
           Move-Item -Path aoc-cli\aoc.exe -Destination $env:ProgramFiles\aoc-cli.exe
-          $env:ProgramFiles\aoc-cli.exe --version
+          aoc-cli --version
 
       - id: install_aoc_lnx
         name: Install aoc-cli binary
@@ -81,10 +81,8 @@ jobs:
           ADVENT_OF_CODE_SESSION: ${{ secrets.ADVENT_OF_CODE_SESSION }}
 
       - id: step4
-        name: Run the solution
+        name: Run the test
         if: steps.step3.conclusion == 'success'
         run: |
           cd ${{ matrix.year }}/${{ matrix.day }} 
           make test
-
-          
