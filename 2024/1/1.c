@@ -1,7 +1,13 @@
+#include <stdio.h>
+#ifdef SOMETHING_WINDOWS
 #include <windows.h>
 #include <stdint.h> // for uint32_t
-#include <stdio.h>
+#endif
 
+#ifdef SOMETHING_LINUX
+#include <stdlib.h>
+#include <string.h>
+#endif
 
 typedef struct  {
     uint32_t size;
@@ -16,6 +22,9 @@ typedef enum {
     E_PARS_EOL
 } Parser_stat;
 
+
+
+#ifdef SOMETHING_WINDOWS
 int main() {
     char *fileName;
     debug_read_file_result result = {};
@@ -174,3 +183,29 @@ int main() {
 
     printf("Part1:%d\n\n", tot);
 }
+#else
+int main(int argc, char **argv) {
+    FILE *fp = argc == 2 ? fopen(argv[1],"r") : stdin;
+    if (!fp) {
+        perror("fopen");
+        exit(1);
+    }
+
+    char buf[2];
+    while(fgets(buf,sizeof(buf),fp) != NULL) {
+        size_t l = strlen(buf);
+        printf("l:%d\n", l);
+        if (l <= 1) continue;
+        if (buf[l-1] == '\n') {
+            buf[l-1] = 0;
+            l--;
+        }
+
+        int x,y;
+        scanf(buf,"%d %d",&x,&y);
+        printf("x:%d y:%d\n",x,y);
+    }
+    if (argc == 2) fclose(fp);
+  return 0;
+}
+#endif
