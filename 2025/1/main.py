@@ -1,6 +1,15 @@
+def dirmod(a,b):
+    res = a%b
+    return res if not res else res-b if a<0 else res
+
 
 def rotate(size: int, start: int, move: int) -> (int, int):
-    return (start + move) % size , abs((start + move) // size)
+    # In [1]: 5%3
+    # Out[1]: 2
+    #
+    # In [2]: -5%3
+    # Out[2]: 1
+    return dirmod(start + move, size) , abs((start + move) // size)
 
 
 def dial(start: int, val: str) -> int :
@@ -23,7 +32,7 @@ def solve(input_str: str, start: int) -> [int, int]:
     return p
 
 
-with open('input_small.txt', 'r') as f:
+with open('input.txt', 'r') as f:
     sol = solve(f.read(), 50)
     print(f"Part1:{sol[0]}")
     print(f"Part2:{sol[1]}")
