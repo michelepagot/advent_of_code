@@ -31,6 +31,30 @@ def is_invalid_part2(i: int) -> bool:
     return False
 
 
+def is_invalid_part1_str(numero: str) -> bool:
+    """Like `is_invalid_part1` but accepts the string form to avoid
+    repeated `str()` conversions when checking both rules for the same id.
+    """
+    l = len(numero)
+    if l % 2:
+        return False
+    half = l // 2
+    return numero[0:half] == numero[half:]
+
+
+def is_invalid_part2_str(numero: str) -> bool:
+    """Like `is_invalid_part2` but accepts the string form.
+    Iterates factors of the length and checks for periodic repetition.
+    """
+    l = len(numero)
+    for r in range(l // 2, 0, -1):
+        if l % r != 0:
+            continue
+        if numero[0:r] * (l // r) == numero:
+            return True
+    return False
+
+
 def find_invalids(id_range: [int, int]) -> [[int], [int]]:
     #log.error("find_invalids_part2:%s", id_range)
     res =  ([],[])
@@ -40,6 +64,27 @@ def find_invalids(id_range: [int, int]) -> [[int], [int]]:
         if is_invalid_part2(i):
             res[1].append(i)
     return res
+
+
+def find_invalids_sums(id_range: [int, int]) -> [int, int]:
+    """Return the sums of invalid ids for part1 and part2 in the range.
+
+    This avoids creating lists of all invalid ids and therefore reduces
+    memory pressure and allocation overhead.
+    """
+    s1 = 0
+    s2 = 0
+    # Local refs to avoid global lookups in the loop
+    _is1 = is_invalid_part1_str
+    _is2 = is_invalid_part2_str
+    start, end = id_range
+    for i in range(start, end + 1):
+        numero = str(i)
+        if _is1(numero):
+            s1 += i
+        if _is2(numero):
+            s2 += i
+    return [s1, s2]
 
 
 def solve_pool_map(input_str: str, processes: int | None = None) -> [int, int]:
@@ -96,7 +141,7 @@ def solve1(input_str: str) -> [int, int]:
     invalids_part1 = 0
     invalids_part2 = 0
     for r in id_ranges:
-        res = find_invalids(r)
-        invalids_part1 += sum(res[0])
-        invalids_part2 += sum(res[1])
-    return [invalids_part1,invalids_part2]
+        s1, s2 = find_invalids_sums(r)
+        invalids_part1 += s1
+        invalids_part2 += s2
+    return [invalids_part1, invalids_part2]
