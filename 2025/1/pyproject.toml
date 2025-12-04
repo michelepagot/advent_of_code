@@ -1,0 +1,17 @@
+[project]
+name = "1"
+version = "2025.1.0"
+description = "AoC 2025 day1"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "mypy>=1.19.0",
+    "pytest>=9.0.1",
+    "ruff>=0.14.7",
+]
+
+[tool.pytest.ini_options]
+pythonpath = "."

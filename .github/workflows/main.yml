@@ -80,6 +80,9 @@ jobs:
         env:
           ADVENT_OF_CODE_SESSION: ${{ secrets.ADVENT_OF_CODE_SESSION }}
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
       - id: step4
         name: Run the test
         if: steps.step3.conclusion == 'success'
