@@ -57,9 +57,10 @@ jobs:
         run: |
           cd $env:TEMP
           Invoke-WebRequest -Uri https://github.com/scarvalhojr/aoc-cli/releases/download/0.12.0/aoc-cli-0.12.0-x86_64-pc-windows-msvc.zip -OutFile aoc-cli.zip
-          Expand-Archive -Path aoc-cli.zip -DestinationPath aoc-cli
-          Move-Item -Path aoc-cli\aoc.exe -Destination $env:ProgramFiles\aoc-cli.exe
-          aoc-cli --version
+          Expand-Archive -Path aoc-cli.zip -DestinationPath aoc-cli -Force
+          $aocExe = Get-ChildItem -Path aoc-cli -Name "aoc.exe" -Recurse | Select-Object -First 1
+          Move-Item -Path "aoc-cli\$aocExe" -Destination $env:ProgramFiles\aoc-cli.exe -Force
+          $env:ProgramFiles\aoc-cli.exe --version
 
       - id: install_aoc_lnx
         name: Install aoc-cli binary
