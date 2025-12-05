@@ -83,6 +83,11 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
 
+      - name: Install ZIG
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.15.2
+
       - id: step4
         name: Run the test
         if: steps.step3.conclusion == 'success'
