@@ -1,0 +1,13 @@
+.{
+    .name = .day_1,
+    .version = "0.0.1",
+    .fingerprint = 0x1ed7a488171cec26,
+    .minimum_zig_version = "0.15.2",
+    .dependencies = .{
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}

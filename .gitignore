@@ -167,3 +167,4 @@ input.txt
 puzzle.md
 *.exe
 *.obj
+.zig-*
